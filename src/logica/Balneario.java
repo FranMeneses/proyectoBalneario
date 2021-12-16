@@ -5,4 +5,6 @@ public interface Balneario {
     public boolean iniciarSesion();
 
     public void comprarAbono();
+
+    public void imprimirMenu();
 }
