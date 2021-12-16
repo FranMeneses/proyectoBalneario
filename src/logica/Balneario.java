@@ -4,7 +4,10 @@ public interface Balneario {
     public boolean registrarUsuario();
     public boolean iniciarSesion();
 
-    public void comprarAbono();
+    public void reservarTemporada();
+    public void reservarSemana();
+    public void reservarDia();
 
     public void imprimirMenu();
+    public void menuCliente();
 }

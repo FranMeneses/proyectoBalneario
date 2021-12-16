@@ -22,9 +22,10 @@ public class App {
                     sistema.registrarUsuario();
                     break;
                 case "OP2":
+                    sistema.iniciarSesion();
                     break;
                 case "OP3":
-                    System.out.println("------------------ Fin Aplicacion ------------------");
+                    System.out.println("--------------------- Fin Aplicacion ---------------------");
                     salir = true;
                     break;
             }
