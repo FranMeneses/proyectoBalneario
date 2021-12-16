@@ -1,12 +1,23 @@
 package logica;
 
 import java.util.Scanner;
+import java.sql.*;
 
 public class BalnearioImpl implements Balneario{
     private Scanner teclado;
+    private String user = "postgres";
+    private String pass = "BKsec1paSS";
     
     public BalnearioImpl(){
         this.teclado = new Scanner(System.in);
+
+        //Acceso a la Base de Datos
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/roquerioDB", user, pass);
+            System.out.println("Conectado con éxito");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override

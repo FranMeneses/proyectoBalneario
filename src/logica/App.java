@@ -16,6 +16,18 @@ public class App {
 				sistema.imprimirMenu();
 				n = teclado.nextLine();
 			}
+            //Switch que contiene las opciones
+            switch(n) {
+                case "OP1":
+                    sistema.registrarUsuario();
+                    break;
+                case "OP2":
+                    break;
+                case "OP3":
+                    System.out.println("------------------ Fin Aplicacion ------------------");
+                    salir = true;
+                    break;
+            }
         }
         teclado.close();
     }//Fin del Main
