@@ -60,7 +60,7 @@ public class BalnearioImpl implements Balneario{
             st.execute(sql);
             st.close();
             conexion.close();
-            System.out.println("Cliente encontrado");
+            System.out.println("Sesion Iniciada");
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -69,9 +69,28 @@ public class BalnearioImpl implements Balneario{
     }
 
     @Override
+    public void hacerReserva() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void sombrillaGlorieta() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void arrendarAdicionales() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void cancelarReserva() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
     public void reservarTemporada() {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
