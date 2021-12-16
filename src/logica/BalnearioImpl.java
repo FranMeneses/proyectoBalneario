@@ -70,7 +70,7 @@ public class BalnearioImpl implements Balneario{
 
     @Override
     public void hacerReserva() {
-        // TODO Auto-generated method stub
+        menuReserva();
     }
 
     @Override
@@ -122,6 +122,17 @@ public class BalnearioImpl implements Balneario{
 		System.out.println("OP3: Arrendar Elementos Adicionales");
         System.out.println("OP4: Cancelar Reserva");
         System.out.println("OP5: Atras");
+		System.out.println("----------------------------------------------------------");
+    }
+
+    @Override
+    public void menuReserva() {
+        System.out.println("--------------------------Reserva-------------------------");
+		System.out.println("opciones: (ingrese su número)");
+		System.out.println("OP1: Reservar Temporada Completa");
+		System.out.println("OP2: Reservar Semana");
+		System.out.println("OP3: Reservar Dia");
+        System.out.println("OP4: Atrás");
 		System.out.println("----------------------------------------------------------");
     }
 }

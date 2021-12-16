@@ -15,4 +15,5 @@ public interface Balneario {
 
     public void imprimirMenu();
     public void menuCliente();
+    public void menuReserva();
 }

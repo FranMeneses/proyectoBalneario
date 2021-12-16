@@ -36,6 +36,7 @@ public class App {
 
                             switch(op) {
                                 case "OP1":
+                                    sistema.hacerReserva();
                                     break;
                                 case "OP2":
                                     break;
