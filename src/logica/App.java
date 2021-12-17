@@ -22,36 +22,7 @@ public class App {
                     sistema.registrarUsuario();
                     break;
                 case "OP2":
-                    if (sistema.iniciarSesion()) {
-                        boolean sesion = false;
-                        while(!sesion){
-                            sistema.menuCliente();
-                            String op = teclado.nextLine();
-
-                            while(!op.equals("OP1") && !op.equals("OP2") && !op.equals("OP3") && !op.equals("OP4") && !op.equals("OP5")){
-								System.out.println("Ingrese la opción correcta");
-								sistema.menuCliente();
-								op = teclado.nextLine();
-							}
-
-                            switch(op) {
-                                case "OP1":
-                                    sistema.hacerReserva();
-                                    break;
-                                case "OP2":
-                                    break;
-                                case "OP3":
-                                    break;
-                                case "OP4":
-                                    break;
-                                case "OP5":
-                                    sesion = true;
-                                    break;
-                            }
-                        }
-                    } else {
-                        System.out.println("Error al iniciar sesion, cliente no encontrado");
-                    }
+                    sistema.iniciarSesion();
                     break;
                 case "OP3":
                     System.out.println("--------------------- Fin Aplicacion ---------------------");

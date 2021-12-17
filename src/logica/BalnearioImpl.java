@@ -49,23 +49,54 @@ public class BalnearioImpl implements Balneario{
 
     @Override
     public boolean iniciarSesion() {
+        boolean sesion = false;
         System.out.println("---------------------- Iniciar Sesion --------------------");
 		System.out.println("Ingrese su correo: ");
 		String mail = teclado.nextLine();
 		System.out.println("Ingrese su contraseña: ");
 		String passwrd = teclado.nextLine();
         System.out.println("----------------------------------------------------------");
-        String sql = "select * from cliente where correo = '"+mail+"' and pass = '"+passwrd+"'";
+        String sql = "select idCliente from cliente where correo = '"+mail+"' and pass = '"+passwrd+"'";
         try {
-            st.execute(sql);
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                System.out.println("idCliente: " + rs.getString(1));
+                System.out.println("Sesion Iniciada");
+                sesion = true;
+                boolean salir = false;
+                        while(!salir){
+                            menuCliente();
+                            String op = teclado.nextLine();
+
+                            while(!op.equals("OP1") && !op.equals("OP2") && !op.equals("OP3") && !op.equals("OP4") && !op.equals("OP5")){
+								System.out.println("Ingrese la opción correcta");
+								menuCliente();
+								op = teclado.nextLine();
+							}
+
+                            switch(op) {
+                                case "OP1":
+                                    hacerReserva();
+                                    break;
+                                case "OP2":
+                                    break;
+                                case "OP3":
+                                    break;
+                                case "OP4":
+                                    break;
+                                case "OP5":
+                                    sesion = true;
+                                    break;
+                            }
+                        }
+            }
+            rs.close();
             st.close();
             conexion.close();
-            System.out.println("Sesion Iniciada");
-            return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return false;
         }
+        return sesion;
     }
 
     @Override
