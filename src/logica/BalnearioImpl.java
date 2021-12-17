@@ -2,6 +2,7 @@ package logica;
 
 import java.util.Scanner;
 import java.sql.*;
+import java.time.LocalDate;
 
 public class BalnearioImpl implements Balneario{
     private Scanner teclado;
@@ -116,12 +117,12 @@ public class BalnearioImpl implements Balneario{
                 case "OP1":
                     if (reservarTemporada(idCliente)) {
                         salir = true;
-                    } else {
-                        continue;
                     }
                     break;
                 case "OP2":
-                    reservarSemana(idCliente);
+                    if (reservarSemana(idCliente)) {
+                        salir = true;
+                    }
                     break;
                 case "OP3":
                     reservarDia(idCliente);
@@ -178,7 +179,41 @@ public class BalnearioImpl implements Balneario{
 
     @Override
     public boolean reservarSemana(String idCliente) {
-        return false;
+        boolean salir = false;
+        String tipo = "semana";
+        System.out.println("Ingrese la fecha de inicio (yyyy-MM-dd): ");
+        String fechaI = teclado.nextLine();
+        LocalDate fechaInicio = LocalDate.parse(fechaI);
+        System.out.println("Ingrese la fecha de termino (yyyy-MM-dd): ");
+        String fechaF = teclado.nextLine();
+        LocalDate fechaTermino = LocalDate.parse(fechaF);
+        String sql = "select * from reserva where idCliente = '"+idCliente+"' and tipo = '"+tipo+"'";
+        try {
+            ResultSet rs = st.executeQuery(sql);
+            if (rs.next()){
+                String sql2 = "select * from semana where idCliente = '"+idCliente+"' and fechaInicio = '"+fechaInicio+"' and fechaTermino = '"+fechaTermino+"'";
+                rs = st.executeQuery(sql2);
+                if (rs.next()) {
+                    System.out.println("Ya tienes una reserva de este mismo tipo en las mismas fechas");
+                    salir = true;
+                }
+            } else {
+                String sql3 = "insert into reserva(idCliente, tipo) values ('"+idCliente+"', '"+tipo+"')";
+                String sql4 = "insert into semana(idCliente, tipo) values ('"+idCliente+"', '"+tipo+"')";
+                try {
+                    st.execute(sql3);
+                    System.out.println("Reserva registrada correctamente");
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            rs.close();
+            st.close();
+            conexion.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return salir;
     }
 
     @Override
