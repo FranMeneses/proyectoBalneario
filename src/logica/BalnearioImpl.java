@@ -182,7 +182,7 @@ public class BalnearioImpl implements Balneario{
     @Override
     public void cancelarReserva (String idCliente){
         
-        String R = "select * from reserva where idCliente ="+idCliente;
+        String R = "select * from reserva where idCliente = '"+idCliente+"'";
         
         try {
             //  Block of code to try
@@ -211,13 +211,13 @@ public class BalnearioImpl implements Balneario{
                     System.out.println("Ingresar ID Reserva para eliminar:");
                     String idR = teclado.nextLine();
                     for (int x = 0; x < listaID.size(); x++){
-                        if (idR == listaID.get(x)){
-                            String R_estacionamiento = "DELETE FROM reservaEstacionamiento WHERE idcliente = '"+idR+"'";
-                            String R_adicional = "DELETE FROM reservaAdicionales WHERE idcliente ='"+idR+"'";
-                            String R_somglo = "DELETE FROM reservaSomGlo WHERE idcliente ='"+idR+"'";
-                            String R_dia = "DELETE FROM dia WHERE idcliente ='"+idR+"'";
-                            String R_semana = "DELETE FROM semana WHERE idcliente ='"+idR+"'";
-                            String R_reserva = "DELETE FROM reserva WHERE idcliente ='"+idR+"'";
+                        if (idR.equals(listaID.get(x))){
+                            String R_estacionamiento = "DELETE FROM reservaEstacionamiento WHERE idReserva = '"+idR+"'";
+                            String R_adicional = "DELETE FROM reservaAdicionales WHERE idReserva ='"+idR+"'";
+                            String R_somglo = "DELETE FROM reservaSomGlo WHERE idReserva ='"+idR+"'";
+                            String R_dia = "DELETE FROM dia WHERE idReserva ='"+idR+"'";
+                            String R_semana = "DELETE FROM semana WHERE idReserva ='"+idR+"'";
+                            String R_reserva = "DELETE FROM reserva WHERE idReserva ='"+idR+"'";
 
                             st.execute(R_estacionamiento);
                             st.execute(R_adicional);
