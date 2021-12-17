@@ -179,7 +179,7 @@ public class BalnearioImpl implements Balneario{
             ResultSet rs = st.executeQuery(reservass);
 
             if(rs.next()){
-                idReservass = rs.getInt(0);
+                idReservass = rs.getInt(1);
                 System.out.println("Cuantas Camas desea reservar?(0 para ninguna) ");
                 int camass = teclado.nextInt();
                 System.out.println("Cuantas Sillas desea reservar?(0 para ninguna) ");
