@@ -120,7 +120,8 @@ public class BalnearioImpl implements Balneario{
                     salir = true;
                     break;
                 case "OP2":
-                    reservarSemana(idCliente);
+                    String idReserva2 = reservarSemana(idCliente);
+                    System.out.println("su reserva semana: " + idReserva2);
                     salir = true;
                     sombrillaGlorieta(idCliente);
                     break;
@@ -288,18 +289,35 @@ public class BalnearioImpl implements Balneario{
         String sql = "select * from reserva where idCliente = '"+idCliente+"' and tipo = '"+tipo+"'";
         try {
             ResultSet rs = st.executeQuery(sql);
+            // Comprueba que el cliente no tenga otra reserva esa misma semana
             if (rs.next()){
                 String sql2 = "select * from semana where idCliente = '"+idCliente+"' and fechaInicio = '"+fechaInicio+"' and fechaTermino = '"+fechaTermino+"'";
                 rs = st.executeQuery(sql2);
                 if (rs.next()) {
-                    System.out.println("Ya tienes una reserva de este mismo tipo en las mismas fechas");
+                    LocalDate fecha1 = LocalDate.parse(rs.getString(3));
+                    LocalDate fecha2 = LocalDate.parse(rs.getString(4));
+                    String sql6 = "select (date '"+fechaInicio+"', date '"+fechaTermino+"') OVERLAPS (date '"+fecha1+"', date '"+fecha2+"')";
+                    ResultSet rs3 = st.executeQuery(sql6);
+                    if (rs3.next()) {
+                        System.out.println("Ya tienes una reserva de este mismo tipo en las mismas fechas");
+                        return valor;
+                    }
                 }
             } else {
+                // Realiza el Ingreso a la base de datos
                 String sql3 = "insert into reserva(idCliente, tipo) values ('"+idCliente+"', '"+tipo+"')";
-                String sql4 = "insert into semana(idCliente, tipo) values ('"+idCliente+"', '"+tipo+"')";
                 try {
                     st.execute(sql3);
-                    System.out.println("Reserva registrada correctamente");
+                    String sql4 = "select * from reserva where idCliente = '"+idCliente+"' and tipo = '"+tipo+"'";
+                    ResultSet rs2 = st.executeQuery(sql4);
+                    if (rs2.next()){
+                        String idReserva = rs2.getString(1);
+                        String sql5 = "insert into semana(idReserva, idCliente, fechaInicio, fechaTermino) values ('"+idReserva+"', '"+idCliente+"', '"+fechaInicio+"', '"+fechaTermino+"')";
+                        st.execute(sql5);
+                        valor = idReserva;
+                        System.out.println("Reserva registrada correctamente");
+                    }
+                    rs2.close();
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
