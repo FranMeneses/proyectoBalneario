@@ -1,5 +1,7 @@
 package logica;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.sql.*;
 import java.time.LocalDate;
@@ -79,7 +81,7 @@ public class BalnearioImpl implements Balneario{
                             hacerReserva(rs.getString(1));
                             break;
                         case "OP2":
-                            cancelarReserva();
+                            cancelarReserva(rs.getString(1));
                             break;
                         case "OP3":
                             salir = true;
@@ -112,8 +114,9 @@ public class BalnearioImpl implements Balneario{
 
             switch(op) {
                 case "OP1":
-                    String valor = reservarTemporada(idCliente);
-                    System.out.println("Cliente id numero: " + valor);
+                    String idReserva = reservarTemporada(idCliente);
+                    // Esto es solo para dejar trabajando el metodo
+                    System.out.println(idReserva);
                     salir = true;
                     break;
                 case "OP2":
@@ -137,13 +140,101 @@ public class BalnearioImpl implements Balneario{
     }
 
     @Override
-    public void arrendarAdicionales() {
-        // TODO Auto-generated method stub
+    public void arrendarAdicionales(String idCliente) {
+        String reservass = "select idreserva from reserva where idcliente = '"+idCliente+"'";
+        String sombrillass = "select idsomglo from reservasomglo where idcliente = '"+idCliente+"'";
+        int idReservass = 0;
+        int idSomglo = 0;
+        
+        try{
+            ResultSet rs = st.executeQuery(reservass);
+
+            if(rs.next()){
+                idReservass = rs.getInt(0);
+                try{
+                    rs = st.executeQuery(sombrillass);
+                    if(rs.next()){
+                        idSomglo = rs.getInt(2);
+                    }
+                    System.out.println("Cuantas Camas desea reservar?(0 para ninguna) ");
+                    int camass = teclado.nextInt();
+                    System.out.println("Cuantas Sillas desea reservar?(0 para ninguna) ");
+                    int sillass = teclado.nextInt();
+                    System.out.println(("Cuantas Tumbonas desea reservar?(0 para ninguna)"));
+                    int tumbonass = teclado.nextInt();
+                    String ingreso = ("insert into reservaadicionales (idreserva, idcliente, idsomglo, camas, sillas, tumbonas) values ('"+idReservass+"','"+idCliente+"','"+idSomglo+"','"+camass+"','"+sillass+"','"+tumbonass+"')");
+                    st.executeQuery(ingreso);
+
+                    rs.close();
+                    st.close();
+                    conexion.close();
+                }catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
     }
 
     @Override
-    public void cancelarReserva() {
-        // TODO Auto-generated method stub
+    public void cancelarReserva (String idCliente){
+        String R = "select * from reserva where idCliente = '"+idCliente+"'";
+        
+        try {
+            //  Block of code to try
+            ResultSet rs = st.executeQuery(R);
+            
+            System.out.println("Reservas");
+            System.out.println("ID Reserva - Tipo");
+
+            List<String> listaID = new ArrayList<>();
+            int cont = 0;
+
+            while (rs.next()) {
+                System.out.println(rs.getString(1)+" - "+rs.getString(3));
+                String p = rs.getString(1);
+
+                listaID.add(p);
+                cont+=1;
+            }
+            if (cont == 0){
+                System.out.println("No existen reservas para eliminar");
+            }
+            else{            
+                boolean v=false;
+                while (!v){
+                    System.out.println("Ingresar ID Reserva para eliminar:");
+                    String idR = teclado.nextLine();
+
+                    for (int x = 0; x < listaID.size(); x++){
+                        if (idR == listaID.get(x)){
+                            String R_estacionamiento = "DELETE FROM reservaEstacionamiento WHERE idcliente ="+idR;
+                            String R_adicional = "DELETE FROM reservaAdicionales WHERE idcliente ="+idR;
+                            String R_somglo = "DELETE FROM reservaSomGlo WHERE idcliente ="+idR;
+                            String R_dia = "DELETE FROM dia WHERE idcliente ="+idR;
+                            String R_semana = "DELETE FROM semana WHERE idcliente ="+idR;
+                            String R_reserva = "DELETE FROM reserva WHERE idcliente ="+idR;
+
+                            st.execute(R_estacionamiento);
+                            st.execute(R_adicional);
+                            st.execute(R_somglo);
+                            st.execute(R_dia);
+                            st.execute(R_semana);
+                            st.execute(R_reserva);
+
+                            v=true;
+                        }
+                    }
+                    System.out.println("Error. Re-intenten.");
+                }
+            }  
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+        }       
     }
 
     @Override
@@ -161,7 +252,7 @@ public class BalnearioImpl implements Balneario{
                     st.execute(sql2);
                     String sql3 = "select * from reserva where idCliente = '"+idCliente+"' and tipo = '"+tipo+"'";
                     rs = st.executeQuery(sql3);
-                    valor = rs.getString(1);
+                    valor = rs.getString(1); //Extraigo la idReserva
                     System.out.println("Reserva registrada correctamente");
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -194,7 +285,6 @@ public class BalnearioImpl implements Balneario{
                 rs = st.executeQuery(sql2);
                 if (rs.next()) {
                     System.out.println("Ya tienes una reserva de este mismo tipo en las mismas fechas");
-                    //salir = true;
                 }
             } else {
                 String sql3 = "insert into reserva(idCliente, tipo) values ('"+idCliente+"', '"+tipo+"')";
