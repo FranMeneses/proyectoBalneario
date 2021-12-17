@@ -11,7 +11,7 @@ public interface Balneario {
 
     public String reservarTemporada(String idCliente);
     public String reservarSemana(String idCliente);
-    public String reservarDia(String idCliente);
+    public void reservarDia(String idCliente);
 
     public void imprimirMenu();
     public void menuCliente();

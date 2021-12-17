@@ -116,7 +116,7 @@ public class BalnearioImpl implements Balneario{
                 case "OP1":
                     String idReserva = reservarTemporada(idCliente);
                     // Esto es solo para dejar trabajando el metodo
-                    System.out.println(idReserva);
+                    System.out.println("Su reserva temporada: " + idReserva);
                     salir = true;
                     break;
                 case "OP2":
@@ -173,11 +173,9 @@ public class BalnearioImpl implements Balneario{
                     System.out.println(e.getMessage());
                 }
             }
-
         }catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        
     }
 
     @Override
@@ -261,6 +259,7 @@ public class BalnearioImpl implements Balneario{
                     st.execute(sql2);
                     String sql3 = "select * from reserva where idCliente = '"+idCliente+"' and tipo = '"+tipo+"'";
                     rs = st.executeQuery(sql3);
+                    rs.next();
                     valor = rs.getString(1); //Extraigo la idReserva
                     System.out.println("Reserva registrada correctamente");
                 } catch (Exception e) {
@@ -332,8 +331,27 @@ public class BalnearioImpl implements Balneario{
     }
 
     @Override
-    public String reservarDia(String idCliente) {
-        return null;
+    public void reservarDia(String idCliente) {
+        System.out.println("Ingrese dia de reserva (yyyy-mm-dd): ");
+        String dia = teclado.nextLine();
+
+        try {
+            ResultSet rs3 = st.executeQuery("SELECT MAX(idReserva) as cant FROM reserva");
+            while (rs3.next()) {
+                int cant = rs3.getInt("cant") + 1;
+                String sql = "INSERT INTO reserva (idReserva, idCliente, tipo) VALUES ('" + cant + "', '" + idCliente
+                        + "','dia')";
+                st.execute(sql);
+                String sql2 = "INSERT INTO dia (idReserva, idCliente, fechaDia) VALUES ('" + cant
+                        + "', '"
+                        + idCliente
+                        + "','" + dia + "')";
+                st.execute(sql2);
+                System.out.println("reserva creada");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
