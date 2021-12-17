@@ -41,22 +41,20 @@ create table estacionamientos (
 create table reservaSomGlo (
 	idReserva serial,
 	idCliente serial,
-	idSomGlo serial,
 	sombrilla boolean,
 	glorieta boolean,
-	primary key (idReserva, idCliente, idSomGlo),
-	foreign key (idReserva, idCliente) references reserva(idReserva, idCliente),
+	primary key (idReserva, idCliente),
+	foreign key (idReserva, idCliente) references reserva(idReserva, idCliente)
 );
 
 create table reservaAdicionales (
 	idReserva serial,
 	idCliente serial,
-	idSomGlo serial,
 	camas integer,
 	sillas integer,
 	tumbonas integer,
-	primary key (idReserva, idCliente, idSomGlo),
-	foreign key (idReserva, idCliente, idSomGlo) references reservaSomGlo(idReserva, idCliente, idSomGlo)
+	primary key (idReserva, idCliente),
+	foreign key (idReserva, idCliente) references reservaSomGlo(idReserva, idCliente)
 );
 
 create table reservaEstacionamiento (
