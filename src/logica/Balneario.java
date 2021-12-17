@@ -5,7 +5,7 @@ public interface Balneario {
     public boolean iniciarSesion();
 
     public void hacerReserva(String idCliente);
-    public void sombrillaGlorieta(String idCliente);
+    public void sombrillaGlorieta(String idReserva, String idCliente);
     public void arrendarAdicionales(String idCliente);
     public void cancelarReserva(String idCliente);
 

@@ -41,7 +41,6 @@ public class BalnearioImpl implements Balneario{
         try {
             st.execute(sql);
             st.close();
-            conexion.close();
             System.out.println("Cliente registrado correctamente");
             return true;
         } catch (Exception e) {
@@ -69,15 +68,14 @@ public class BalnearioImpl implements Balneario{
                     menuCliente();
                     String op = teclado.nextLine();
 
-                    while(!op.equals("OP1") && !op.equals("OP2") && !op.equals("OP3") && !op.equals("OP4") && !op.equals("OP5")){
-					System.out.println("Ingrese la opción correcta");
-					menuCliente();
-					op = teclado.nextLine();
+                    while(!op.equals("OP1") && !op.equals("OP2") && !op.equals("OP3")){
+					    System.out.println("Ingrese la opción correcta");
+					    menuCliente();
+					    op = teclado.nextLine();
 					}
 
                     switch(op) {
                         case "OP1":
-                            // Le paso la idCliente con rs
                             hacerReserva(rs.getString(1));
                             break;
                         case "OP2":
@@ -92,7 +90,6 @@ public class BalnearioImpl implements Balneario{
             }
             rs.close();
             st.close();
-            conexion.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -101,77 +98,99 @@ public class BalnearioImpl implements Balneario{
 
     @Override
     public void hacerReserva(String idCliente) {
-        boolean salir = false;
-        while(!salir){
+        boolean seguir = true;
+        String idReserva = null;
+        while (seguir) {
             menuReserva();
             String op = teclado.nextLine();
-
-            while(!op.equals("OP1") && !op.equals("OP2") && !op.equals("OP3") && !op.equals("OP4")){
-            System.out.println("Ingrese la opción correcta");
-            menuReserva();
-            op = teclado.nextLine();
+            while (!op.equals("OP1") && !op.equals("OP2") && !op.equals("OP3") && !op.equals("OP4")) {
+                System.out.println("Ingrese la opcion correcta");
+                menuReserva();
+                op = teclado.nextLine();
             }
-
-            switch(op) {
+            switch (op) {
                 case "OP1":
-                    String idReserva = reservarTemporada(idCliente);
-                    // Esto es solo para dejar trabajando el metodo
-                    System.out.println("Su reserva temporada: " + idReserva);
-                    salir = true;
+                    idReserva = reservarTemporada(idCliente);                  
                     break;
                 case "OP2":
-                    String idReserva2 = reservarSemana(idCliente);
-                    System.out.println("su reserva semana: " + idReserva2);
-                    salir = true;
-                    sombrillaGlorieta(idCliente);
+                    idReserva = reservarSemana(idCliente);
+                    System.out.println("Reserva de semana: " + idReserva);              
                     break;
                 case "OP3":
-                    reservarDia(idCliente);
+                    //idReserva = reservarDia(idCliente);
                     break;
                 case "OP4":
-                    salir = true;
+                    seguir = false;
                     break;
+            }
+            if (idReserva != null) {
+                sombrillaGlorieta(idReserva,idCliente);
+                System.out.println("Desea Agregar Adicionales (s/n)?:");
+                String sino = teclado.nextLine();
+                if (sino.equals("s")){
+                    arrendarAdicionales(idCliente);
+                }
+                seguir = false;
             }
         }
     }
 
     @Override
-    public void sombrillaGlorieta(String idCliente) {
-        // TODO Auto-generated method stub
+    public void sombrillaGlorieta(String idReserva, String idCliente) {
+        String opcion = "a";
+        while ((opcion.compareTo("g") * opcion.compareTo("s")) != 0) {
+            System.out.println("seleccione una opcion");
+            System.out.println("g: glorieta");
+            System.out.println("s: sombrilla");
+            opcion = teclado.nextLine();
+            switch (opcion) {
+                case "g":
+                    sendtoDB(String.format(
+                            "insert into reservaSomGlo(idReserva, idCliente, sombrilla, glorieta) values ('%s', '%s', 'FALSE', 'TRUE')",
+                            idReserva, idCliente));
+                    break;
+                case "s":
+                    sendtoDB(String.format(
+                            "insert into reservaSomGlo(idReserva, idCliente, sombrilla, glorieta) values ('%s', '%s', 'TRUE', 'FALSE')",
+                            idReserva, idCliente));
+                    break;
+            }
+        }
     }
+
+    private void sendtoDB(String info) {
+        try {
+            Connection conexion = this.conn.conectar();
+            Statement statement = conexion.createStatement();
+            statement.execute(info);
+            statement.close();
+            conexion.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+	
 
     @Override
     public void arrendarAdicionales(String idCliente) {
         String reservass = "select idreserva from reserva where idcliente = '"+idCliente+"'";
-        String sombrillass = "select idsomglo from reservasomglo where idcliente = '"+idCliente+"'";
         int idReservass = 0;
-        int idSomglo = 0;
-        
         try{
             ResultSet rs = st.executeQuery(reservass);
 
             if(rs.next()){
                 idReservass = rs.getInt(0);
-                try{
-                    rs = st.executeQuery(sombrillass);
-                    if(rs.next()){
-                        idSomglo = rs.getInt(2);
-                    }
-                    System.out.println("Cuantas Camas desea reservar?(0 para ninguna) ");
-                    int camass = teclado.nextInt();
-                    System.out.println("Cuantas Sillas desea reservar?(0 para ninguna) ");
-                    int sillass = teclado.nextInt();
-                    System.out.println(("Cuantas Tumbonas desea reservar?(0 para ninguna)"));
-                    int tumbonass = teclado.nextInt();
-                    String ingreso = ("insert into reservaadicionales (idreserva, idcliente, idsomglo, camas, sillas, tumbonas) values ('"+idReservass+"','"+idCliente+"','"+idSomglo+"','"+camass+"','"+sillass+"','"+tumbonass+"')");
-                    st.executeQuery(ingreso);
+                System.out.println("Cuantas Camas desea reservar?(0 para ninguna) ");
+                int camass = teclado.nextInt();
+                System.out.println("Cuantas Sillas desea reservar?(0 para ninguna) ");
+                int sillass = teclado.nextInt();
+                System.out.println(("Cuantas Tumbonas desea reservar?(0 para ninguna)"));
+                int tumbonass = teclado.nextInt();
+                String ingreso = ("insert into reservaadicionales (idreserva, idcliente, camas, sillas, tumbonas) values ('"+idReservass+"','"+idCliente+"','"+camass+"','"+sillass+"','"+tumbonass+"')");
+                st.executeQuery(ingreso);
 
-                    rs.close();
-                    st.close();
-                    conexion.close();
-                }catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
+                rs.close();
+                st.close();
             }
         }catch (Exception e) {
             System.out.println(e.getMessage());
@@ -180,13 +199,10 @@ public class BalnearioImpl implements Balneario{
 
     @Override
     public void cancelarReserva (String idCliente){
-        
         String R = "select * from reserva where idCliente = '"+idCliente+"'";
-        
         try {
             //  Block of code to try
             ResultSet rs = st.executeQuery(R);
-            
             System.out.println("Reservas");
             System.out.println("ID Reserva - Tipo");
 
@@ -266,9 +282,6 @@ public class BalnearioImpl implements Balneario{
                     System.out.println(e.getMessage());
                 }
             }
-            rs.close();
-            st.close();
-            conexion.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -290,7 +303,7 @@ public class BalnearioImpl implements Balneario{
             ResultSet rs = st.executeQuery(sql);
             // Comprueba que el cliente no tenga otra reserva esa misma semana
             if (rs.next()){
-                String sql2 = "select * from semana where idCliente = '"+idCliente+"' and fechaInicio = '"+fechaInicio+"' and fechaTermino = '"+fechaTermino+"'";
+                String sql2 = "select * from semana where idCliente = '"+idCliente+"'";
                 rs = st.executeQuery(sql2);
                 if (rs.next()) {
                     LocalDate fecha1 = LocalDate.parse(rs.getString(3));
@@ -321,9 +334,6 @@ public class BalnearioImpl implements Balneario{
                     System.out.println(e.getMessage());
                 }
             }
-            rs.close();
-            st.close();
-            conexion.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

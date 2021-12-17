@@ -1,5 +1,6 @@
 package logica;
 
+import java.sql.Connection;
 import java.util.Scanner;
 
 public class App {
