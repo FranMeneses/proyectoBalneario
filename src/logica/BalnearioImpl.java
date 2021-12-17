@@ -60,35 +60,35 @@ public class BalnearioImpl implements Balneario{
         try {
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
-                System.out.println("idCliente: " + rs.getString(1));
                 System.out.println("Sesion Iniciada");
-                sesion = true;
                 boolean salir = false;
-                        while(!salir){
-                            menuCliente();
-                            String op = teclado.nextLine();
+                while(!salir){
+                    menuCliente();
+                    String op = teclado.nextLine();
 
-                            while(!op.equals("OP1") && !op.equals("OP2") && !op.equals("OP3") && !op.equals("OP4") && !op.equals("OP5")){
-								System.out.println("Ingrese la opción correcta");
-								menuCliente();
-								op = teclado.nextLine();
-							}
+                    while(!op.equals("OP1") && !op.equals("OP2") && !op.equals("OP3") && !op.equals("OP4") && !op.equals("OP5")){
+					System.out.println("Ingrese la opción correcta");
+					menuCliente();
+					op = teclado.nextLine();
+					}
 
-                            switch(op) {
-                                case "OP1":
-                                    hacerReserva();
-                                    break;
-                                case "OP2":
-                                    break;
-                                case "OP3":
-                                    break;
-                                case "OP4":
-                                    break;
-                                case "OP5":
-                                    sesion = true;
-                                    break;
-                            }
-                        }
+                    switch(op) {
+                        case "OP1":
+                            // Le paso la idCliente con rs
+                            hacerReserva(rs.getString(1));
+                            break;
+                        case "OP2":
+                            break;
+                        case "OP3":
+                            break;
+                        case "OP4":
+                            break;
+                        case "OP5":
+                            salir = true;
+                            break;
+                    }
+                }
+                sesion = true;
             }
             rs.close();
             st.close();
@@ -100,8 +100,33 @@ public class BalnearioImpl implements Balneario{
     }
 
     @Override
-    public void hacerReserva() {
-        menuReserva();
+    public void hacerReserva(String idCliente) {
+        boolean salir = false;
+        while(!salir){
+            menuReserva();
+            String op = teclado.nextLine();
+
+            while(!op.equals("OP1") && !op.equals("OP2") && !op.equals("OP3") && !op.equals("OP4")){
+            System.out.println("Ingrese la opción correcta");
+            menuReserva();
+            op = teclado.nextLine();
+            }
+
+            switch(op) {
+                case "OP1":
+                    reservarTemporada(idCliente);
+                    break;
+                case "OP2":
+                    reservarSemana(idCliente);
+                    break;
+                case "OP3":
+                    reservarDia(idCliente);
+                    break;
+                case "OP4":
+                    salir = true;
+                    break;
+            }
+        }
     }
 
     @Override
@@ -120,17 +145,17 @@ public class BalnearioImpl implements Balneario{
     }
 
     @Override
-    public void reservarTemporada() {
+    public void reservarTemporada(String idCliente) {
         // TODO Auto-generated method stub
     }
 
     @Override
-    public void reservarSemana() {
+    public void reservarSemana(String idCliente) {
         // TODO Auto-generated method stub
     }
 
     @Override
-    public void reservarDia() {
+    public void reservarDia(String idCliente) {
         // TODO Auto-generated method stub
     }
 
