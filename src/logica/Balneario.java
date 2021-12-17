@@ -5,13 +5,13 @@ public interface Balneario {
     public boolean iniciarSesion();
 
     public void hacerReserva(String idCliente);
-    public void sombrillaGlorieta();
+    public void sombrillaGlorieta(String idCliente);
     public void arrendarAdicionales();
     public void cancelarReserva();
 
-    public boolean reservarTemporada(String idCliente);
-    public boolean reservarSemana(String idCliente);
-    public boolean reservarDia(String idCliente);
+    public String reservarTemporada(String idCliente);
+    public String reservarSemana(String idCliente);
+    public String reservarDia(String idCliente);
 
     public void imprimirMenu();
     public void menuCliente();

@@ -79,12 +79,9 @@ public class BalnearioImpl implements Balneario{
                             hacerReserva(rs.getString(1));
                             break;
                         case "OP2":
+                            cancelarReserva();
                             break;
                         case "OP3":
-                            break;
-                        case "OP4":
-                            break;
-                        case "OP5":
                             salir = true;
                             break;
                     }
@@ -115,14 +112,14 @@ public class BalnearioImpl implements Balneario{
 
             switch(op) {
                 case "OP1":
-                    if (reservarTemporada(idCliente)) {
-                        salir = true;
-                    }
+                    String valor = reservarTemporada(idCliente);
+                    System.out.println("Cliente id numero: " + valor);
+                    salir = true;
                     break;
                 case "OP2":
-                    if (reservarSemana(idCliente)) {
-                        salir = true;
-                    }
+                    reservarSemana(idCliente);
+                    salir = true;
+                    sombrillaGlorieta(idCliente);
                     break;
                 case "OP3":
                     reservarDia(idCliente);
@@ -135,7 +132,7 @@ public class BalnearioImpl implements Balneario{
     }
 
     @Override
-    public void sombrillaGlorieta() {
+    public void sombrillaGlorieta(String idCliente) {
         // TODO Auto-generated method stub
     }
 
@@ -150,19 +147,21 @@ public class BalnearioImpl implements Balneario{
     }
 
     @Override
-    public boolean reservarTemporada(String idCliente) {
-        boolean salir = false;
+    public String reservarTemporada(String idCliente) {
+        String valor = null;
         String tipo = "temporada";
         String sql = "select * from reserva where idCliente = '"+idCliente+"' and tipo = '"+tipo+"'";
         try {
             ResultSet rs = st.executeQuery(sql);
             if (rs.next()){
                 System.out.println("Ya tienes una reserva de este mismo tipo");
-                salir = true;
             } else {
                 String sql2 = "insert into reserva(idCliente, tipo) values ('"+idCliente+"', '"+tipo+"')";
                 try {
                     st.execute(sql2);
+                    String sql3 = "select * from reserva where idCliente = '"+idCliente+"' and tipo = '"+tipo+"'";
+                    rs = st.executeQuery(sql3);
+                    valor = rs.getString(1);
                     System.out.println("Reserva registrada correctamente");
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -174,12 +173,12 @@ public class BalnearioImpl implements Balneario{
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return salir;
+        return valor;
     }
 
     @Override
-    public boolean reservarSemana(String idCliente) {
-        boolean salir = false;
+    public String reservarSemana(String idCliente) {
+        String valor = null;
         String tipo = "semana";
         System.out.println("Ingrese la fecha de inicio (yyyy-MM-dd): ");
         String fechaI = teclado.nextLine();
@@ -195,7 +194,7 @@ public class BalnearioImpl implements Balneario{
                 rs = st.executeQuery(sql2);
                 if (rs.next()) {
                     System.out.println("Ya tienes una reserva de este mismo tipo en las mismas fechas");
-                    salir = true;
+                    //salir = true;
                 }
             } else {
                 String sql3 = "insert into reserva(idCliente, tipo) values ('"+idCliente+"', '"+tipo+"')";
@@ -213,12 +212,12 @@ public class BalnearioImpl implements Balneario{
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return salir;
+        return valor;
     }
 
     @Override
-    public boolean reservarDia(String idCliente) {
-        return false;
+    public String reservarDia(String idCliente) {
+        return null;
     }
 
     @Override
@@ -236,10 +235,8 @@ public class BalnearioImpl implements Balneario{
         System.out.println("--------------------------Cliente-------------------------");
 		System.out.println("opciones: (ingrese su número)");
 		System.out.println("OP1: Hacer Reserva");
-		System.out.println("OP2: Arrendar Sombrilla o Glorieta");
-		System.out.println("OP3: Arrendar Elementos Adicionales");
-        System.out.println("OP4: Cancelar Reserva");
-        System.out.println("OP5: Atras");
+        System.out.println("OP2: Cancelar Reserva");
+        System.out.println("OP3: Atras");
 		System.out.println("----------------------------------------------------------");
     }
 
