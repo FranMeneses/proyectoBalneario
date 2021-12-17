@@ -9,9 +9,9 @@ public interface Balneario {
     public void arrendarAdicionales();
     public void cancelarReserva();
 
-    public void reservarTemporada(String idCliente);
-    public void reservarSemana(String idCliente);
-    public void reservarDia(String idCliente);
+    public boolean reservarTemporada(String idCliente);
+    public boolean reservarSemana(String idCliente);
+    public boolean reservarDia(String idCliente);
 
     public void imprimirMenu();
     public void menuCliente();

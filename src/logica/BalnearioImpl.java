@@ -114,7 +114,11 @@ public class BalnearioImpl implements Balneario{
 
             switch(op) {
                 case "OP1":
-                    reservarTemporada(idCliente);
+                    if (reservarTemporada(idCliente)) {
+                        salir = true;
+                    } else {
+                        continue;
+                    }
                     break;
                 case "OP2":
                     reservarSemana(idCliente);
@@ -145,18 +149,41 @@ public class BalnearioImpl implements Balneario{
     }
 
     @Override
-    public void reservarTemporada(String idCliente) {
-        // TODO Auto-generated method stub
+    public boolean reservarTemporada(String idCliente) {
+        boolean salir = false;
+        String tipo = "temporada";
+        String sql = "select * from reserva where idCliente = '"+idCliente+"' and tipo = '"+tipo+"'";
+        try {
+            ResultSet rs = st.executeQuery(sql);
+            if (rs.next()){
+                System.out.println("Ya tienes una reserva de este mismo tipo");
+                salir = true;
+            } else {
+                String sql2 = "insert into reserva(idCliente, tipo) values ('"+idCliente+"', '"+tipo+"')";
+                try {
+                    st.execute(sql2);
+                    System.out.println("Reserva registrada correctamente");
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            rs.close();
+            st.close();
+            conexion.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return salir;
     }
 
     @Override
-    public void reservarSemana(String idCliente) {
-        // TODO Auto-generated method stub
+    public boolean reservarSemana(String idCliente) {
+        return false;
     }
 
     @Override
-    public void reservarDia(String idCliente) {
-        // TODO Auto-generated method stub
+    public boolean reservarDia(String idCliente) {
+        return false;
     }
 
     @Override
